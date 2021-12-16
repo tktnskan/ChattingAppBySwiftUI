@@ -6,17 +6,28 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
+
+struct ChatUser {
+    let uid, email, profileImageUrl: String
+}
 
 class MainMessagesViewModel: ObservableObject {
     
     @Published var errorMessage = ""
-    
+    @Published var chatUser: ChatUser?
+    @Published var isUserCurrentlyLoggedOut = false
     
     init() {
+        
+        DispatchQueue.main.async {
+            self.isUserCurrentlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
+        }
+        
         fetchCurrentUser()
     }
     
-    private func fetchCurrentUser() {
+    func fetchCurrentUser() {
 
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             self.errorMessage = "Could not find firebase uid"
@@ -30,9 +41,23 @@ class MainMessagesViewModel: ObservableObject {
                 return
             }
             
-            guard let data = snapshot?.data() else { return }
-            self.errorMessage = "Data: \(data.description)"
+            guard let data = snapshot?.data() else {
+                self.errorMessage = "No Data found"
+                return
+            }
+//            self.errorMessage = "Data: \(data.description)"
+            let uid = data["uid"] as? String ?? ""
+            let email = data["email"] as? String ?? ""
+            let profileImageUrl = data["profileImageUrl"] as? String ?? ""
+            self.chatUser = ChatUser(uid: uid, email: email, profileImageUrl: profileImageUrl)
+            
+//            self.errorMessage = chatUser?.profileImageUrl
         }
+    }
+    
+    func handleSignOut() {
+        isUserCurrentlyLoggedOut.toggle()
+        try? FirebaseManager.shared.auth.signOut()
     }
 }
 
@@ -46,7 +71,7 @@ struct MainMessagesView: View {
             VStack {
                 // custom nav bar
                 
-                Text("Current user id: \(viewModel.errorMessage)")
+//                Text("User: \(viewModel.chatUser?.uid ?? "")")
                 customNavBar
                 messagesView
             }
@@ -60,11 +85,19 @@ struct MainMessagesView: View {
     private var customNavBar: some View {
         HStack(spacing: 16) {
             
-            Image(systemName: "person.fill")
-                .font(.system(size: 34, weight: .heavy))
+            WebImage(url: URL(string: viewModel.chatUser?.profileImageUrl ?? ""))
+                .resizable()
+                .scaledToFill()
+                .frame(width:50, height: 50)
+                .clipped()
+                .cornerRadius(25)
+                .overlay(RoundedRectangle(cornerRadius: 44)
+                            .stroke(Color(.label), lineWidth: 1))
+                .shadow(radius: 5)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("USERNAME")
+                let email = viewModel.chatUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
+                Text(email)
                     .font(.system(size: 24, weight: .bold))
                 
                 HStack {
@@ -87,7 +120,15 @@ struct MainMessagesView: View {
         }
         .padding()
         .actionSheet(isPresented: $shouldShowLogOutOption) {
-            .init(title: Text("Settings"), message: Text("Waht do you want to do?"), buttons: [.destructive(Text("Sing Out")), .cancel()])
+            .init(title: Text("Settings"), message: Text("Waht do you want to do?"), buttons: [.destructive(Text("Sign Out"), action: {
+                viewModel.handleSignOut()
+            }), .cancel()])
+        }
+        .fullScreenCover(isPresented: $viewModel.isUserCurrentlyLoggedOut, onDismiss: nil) {
+            LoginView {
+                self.viewModel.isUserCurrentlyLoggedOut = false
+                self.viewModel.fetchCurrentUser()
+            }
         }
     }
     

@@ -8,72 +8,24 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct ChatUser {
-    let uid, email, profileImageUrl: String
-}
-
-class MainMessagesViewModel: ObservableObject {
-    
-    @Published var errorMessage = ""
-    @Published var chatUser: ChatUser?
-    @Published var isUserCurrentlyLoggedOut = false
-    
-    init() {
-        
-        DispatchQueue.main.async {
-            self.isUserCurrentlyLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
-        }
-        
-        fetchCurrentUser()
-    }
-    
-    func fetchCurrentUser() {
-
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            self.errorMessage = "Could not find firebase uid"
-            return
-        }
-        
-        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument { snapshot, error in
-            if let error = error {
-                self.errorMessage = "Failed to fetch current user: \(error)"
-                print("Failed to fetch current user: ", error)
-                return
-            }
-            
-            guard let data = snapshot?.data() else {
-                self.errorMessage = "No Data found"
-                return
-            }
-//            self.errorMessage = "Data: \(data.description)"
-            let uid = data["uid"] as? String ?? ""
-            let email = data["email"] as? String ?? ""
-            let profileImageUrl = data["profileImageUrl"] as? String ?? ""
-            self.chatUser = ChatUser(uid: uid, email: email, profileImageUrl: profileImageUrl)
-            
-//            self.errorMessage = chatUser?.profileImageUrl
-        }
-    }
-    
-    func handleSignOut() {
-        isUserCurrentlyLoggedOut.toggle()
-        try? FirebaseManager.shared.auth.signOut()
-    }
-}
 
 struct MainMessagesView: View {
     
     @State private var shouldShowLogOutOption = false
     @ObservedObject private var viewModel = MainMessagesViewModel()
+    @State private var shouldShowNewMessageScreen = false
+    @State private var chatUser: ChatUser?
+    @State private var shouldNavigateToChatLogView = false
     
     var body: some View {
         NavigationView {
             VStack {
-                // custom nav bar
-                
-//                Text("User: \(viewModel.chatUser?.uid ?? "")")
                 customNavBar
                 messagesView
+                
+                NavigationLink("", isActive: $shouldNavigateToChatLogView) {
+                    ChatLogView(chatUser: self.chatUser)
+                }
             }
             .overlay (
                 newMessageButton
@@ -136,28 +88,32 @@ struct MainMessagesView: View {
         ScrollView {
             ForEach(0..<10, id: \.self) { num in
                 VStack {
-                    HStack(spacing: 16) {
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 32))
-                            .padding(8)
-                            .overlay(RoundedRectangle(cornerRadius: 44)
-                                        .stroke(Color(.label), lineWidth: 1))
-                        
-                        VStack(alignment: .leading) {
-                            Text("Username")
-                                .font(.system(size: 16, weight: .bold))
-                            Text("Message Sent to user")
-                                .font(.system(size: 14))
-                                .foregroundColor(Color(.lightGray))
+                    NavigationLink {
+                        ChatLogView(chatUser: self.chatUser)
+                    } label: {
+                        HStack(spacing: 16) {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 32))
+                                .padding(8)
+                                .overlay(RoundedRectangle(cornerRadius: 44)
+                                            .stroke(Color(.label), lineWidth: 1))
+                            
+                            VStack(alignment: .leading) {
+                                Text("Username")
+                                    .font(.system(size: 16, weight: .bold))
+                                Text("Message Sent to user")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color(.lightGray))
+                            }
+                            
+                            Spacer()
+                            
+                            Text("22d")
+                                .font(.system(size: 14, weight: .semibold))
                         }
-                        
-                        Spacer()
-                        
-                        Text("22d")
-                            .font(.system(size: 14, weight: .semibold))
+                        Divider()
+                            .padding(.vertical, 8)
                     }
-                    Divider()
-                        .padding(.vertical, 8)
                 }
                 .padding(.horizontal)
             }
@@ -167,7 +123,7 @@ struct MainMessagesView: View {
     
     private var newMessageButton: some View {
         Button {
-            
+            shouldShowNewMessageScreen.toggle()
         } label: {
             HStack {
                 Spacer()
@@ -181,6 +137,13 @@ struct MainMessagesView: View {
                 .cornerRadius(32)
                 .padding(.horizontal)
                 .shadow(radius: 15)
+        }
+        .fullScreenCover(isPresented: $shouldShowNewMessageScreen) {
+            CreateNewMessageView { user in
+                print(user.email)
+                self.shouldNavigateToChatLogView.toggle()
+                self.chatUser = user
+            }
         }
     }
 }

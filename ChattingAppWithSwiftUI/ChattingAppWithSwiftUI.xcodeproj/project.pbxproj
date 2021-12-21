@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C2FB36B277195E700D1581C /* ChatLogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C2FB36A277195E700D1581C /* ChatLogViewModel.swift */; };
 		5C49AE62276C20AF00567812 /* ChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C49AE61276C20AF00567812 /* ChatUser.swift */; };
 		5C49AE65276C20DB00567812 /* MainMessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C49AE64276C20DB00567812 /* MainMessagesViewModel.swift */; };
 		5C49AE68276C239300567812 /* CreateNewMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C49AE67276C239300567812 /* CreateNewMessageView.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C2FB36A277195E700D1581C /* ChatLogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogViewModel.swift; sourceTree = "<group>"; };
 		5C49AE61276C20AF00567812 /* ChatUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUser.swift; sourceTree = "<group>"; };
 		5C49AE64276C20DB00567812 /* MainMessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessagesViewModel.swift; sourceTree = "<group>"; };
 		5C49AE67276C239300567812 /* CreateNewMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewMessageView.swift; sourceTree = "<group>"; };
@@ -58,6 +60,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C2FB369277195D000D1581C /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5C2FB36A277195E700D1581C /* ChatLogViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		5C49AE60276C209500567812 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +104,7 @@
 		5C49AE6C276C70FD00567812 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				5C2FB369277195D000D1581C /* ViewModel */,
 				5C49AE6D276C711200567812 /* ChatLogView.swift */,
 			);
 			path = Chat;
@@ -242,6 +253,7 @@
 				5C49AE62276C20AF00567812 /* ChatUser.swift in Sources */,
 				5C49AE6E276C711200567812 /* ChatLogView.swift in Sources */,
 				5C7744EC276821CA0062A566 /* ImagePicker.swift in Sources */,
+				5C2FB36B277195E700D1581C /* ChatLogViewModel.swift in Sources */,
 				5C49AE65276C20DB00567812 /* MainMessagesViewModel.swift in Sources */,
 				5C49AE68276C239300567812 /* CreateNewMessageView.swift in Sources */,
 				5C7744EF27682C0E0062A566 /* MainMessagesView.swift in Sources */,

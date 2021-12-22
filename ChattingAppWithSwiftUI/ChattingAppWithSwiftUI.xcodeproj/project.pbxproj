@@ -25,6 +25,7 @@
 		5CE542AF2768504800332604 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5CE542AE2768504800332604 /* FirebaseAuth */; };
 		5CE542B12768504800332604 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5CE542B02768504800332604 /* FirebaseFirestore */; };
 		5CE542B32768504800332604 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5CE542B22768504800332604 /* FirebaseStorage */; };
+		5CFC3F562772E52E0029C6D1 /* SuperTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC3F552772E52E0029C6D1 /* SuperTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		5C7744EE27682C0E0062A566 /* MainMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessagesView.swift; sourceTree = "<group>"; };
 		5C7744F127684B5D0062A566 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		5C856DD2276AF64200D079FF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5CFC3F552772E52E0029C6D1 /* SuperTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				5C7744F127684B5D0062A566 /* FirebaseManager.swift */,
+				5CFC3F552772E52E0029C6D1 /* SuperTextField.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				5C49AE62276C20AF00567812 /* ChatUser.swift in Sources */,
 				5C49AE6E276C711200567812 /* ChatLogView.swift in Sources */,
 				5C7744EC276821CA0062A566 /* ImagePicker.swift in Sources */,
+				5CFC3F562772E52E0029C6D1 /* SuperTextField.swift in Sources */,
 				5C2FB36B277195E700D1581C /* ChatLogViewModel.swift in Sources */,
 				5C49AE65276C20DB00567812 /* MainMessagesViewModel.swift in Sources */,
 				5C49AE68276C239300567812 /* CreateNewMessageView.swift in Sources */,

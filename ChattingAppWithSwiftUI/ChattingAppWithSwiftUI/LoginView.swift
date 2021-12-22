@@ -54,13 +54,14 @@ struct LoginView: View {
                     }
                     
                     Group {
-                        TextField("Email", text: $email)
+                        SuperTextField(placeholder: Text("email").foregroundColor(Color(.lightGray)), text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
-                        SecureField("Password", text: $password)
+                        SuperSecureField(placeholder: Text("password").foregroundColor(Color(.lightGray)), text: $password)
                     }
                     .padding(12)
                     .background(Color.white)
+                    .foregroundColor(Color.black)
                     
                     Button{
                         handleAction()

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct ChatLogView: View {
     
     static let emptyScrollToString = "Empty"
@@ -19,12 +20,16 @@ struct ChatLogView: View {
     }
     
     var body: some View {
-        ZStack {
-            messagesView
-            Text(viewModel.errorMessage)
+        if #available(iOS 15.0, *) {
+            ZStack {
+                messagesView
+                Text(viewModel.errorMessage)
+            }
+            .navigationTitle(chatUser?.email ?? "")
+            .navigationBarTitleDisplayMode(.inline)
+        } else {
+            // Fallback on earlier versions
         }
-        .navigationTitle(chatUser?.email ?? "")
-        .navigationBarTitleDisplayMode(.inline)
     }
     
     private var messagesView: some View {
@@ -49,7 +54,7 @@ struct ChatLogView: View {
                         }
                     }
                 }
-                .background(Color(.init(white: 0.95, alpha: 1)))
+                .background(Color(.systemBackground))
                 .safeAreaInset(edge: .bottom) {
                     chatBottomBar
                         .background(Color(.systemBackground).ignoresSafeArea())
@@ -141,6 +146,7 @@ struct ChatLogView_Previews: PreviewProvider {
         NavigationView {
             ChatLogView(chatUser: .init(data: ["uid":"AQ7xUDT3pvV6FiF0Gm4lnTIjoF52" ,"email":"JinyungYoon@gmail.com"]))
         }
+        .preferredColorScheme(.dark)
 //        MainMessagesView()
     }
 }

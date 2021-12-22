@@ -82,29 +82,32 @@ class ChatLogViewModel: ObservableObject {
                                     .document()
         
         let messageData:[String: Any] = [FirebaseConstants.fromId: fromId, FirebaseConstants.toId: toId, FirebaseConstants.text: charText, FirebaseConstants.timestamp: Timestamp()]
+        self.charText = ""
+        
         document.setData(messageData) { error in
             if let error = error {
                 print(error)
                 self.errorMessage = "Failed to save message into Firestore: \(error)"
                 return
             }
-            self.charText = ""
             print("Successfully saved current user sending message")
         }
         
-        let recipientMessageDocument = FirebaseManager.shared.firestore
-                                    .collection("messages")
-                                    .document(toId)
-                                    .collection(fromId)
-                                    .document()
-        
-        recipientMessageDocument .setData(messageData) { error in
-            if let error = error {
-                print(error)
-                self.errorMessage = "Failed to save message into Firestore: \(error)"
-                return
+        if fromId != toId {
+            let recipientMessageDocument = FirebaseManager.shared.firestore
+                                        .collection("messages")
+                                        .document(toId)
+                                        .collection(fromId)
+                                        .document()
+            
+            recipientMessageDocument .setData(messageData) { error in
+                if let error = error {
+                    print(error)
+                    self.errorMessage = "Failed to save message into Firestore: \(error)"
+                    return
+                }
+                print("Recipient saved message as well")
             }
-            print("Recipient saved message as well")
         }
     }
 }

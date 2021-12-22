@@ -48,8 +48,8 @@ struct MainMessagesView: View {
                 .shadow(radius: 5)
             
             VStack(alignment: .leading, spacing: 4) {
-                let email = viewModel.chatUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
-                Text(email)
+                let email = viewModel.chatUser?.email.components(separatedBy: "@")
+                Text(email?[0] ?? "")
                     .font(.system(size: 24, weight: .bold))
                 
                 HStack {

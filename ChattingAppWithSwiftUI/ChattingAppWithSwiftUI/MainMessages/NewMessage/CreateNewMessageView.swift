@@ -12,7 +12,7 @@ struct CreateNewMessageView: View {
     
     let didSelectNewUser: (ChatUser) -> ()
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var viewModel = CreateNewMessageViewModel()
+    @StateObject var viewModel = CreateNewMessageViewModel()
     
     var body: some View {
         NavigationView{

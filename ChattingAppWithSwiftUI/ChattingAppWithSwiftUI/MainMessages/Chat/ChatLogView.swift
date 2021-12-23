@@ -73,7 +73,7 @@ struct ChatLogView: View {
 //                TextEditor(text: $chatText)
             ZStack {
                 DescriptionPlaceholder()
-                TextEditor(text: $viewModel.charText).opacity(viewModel.charText.isEmpty ? 0.5 : 1)
+                TextEditor(text: $viewModel.chatText).opacity(viewModel.chatText.isEmpty ? 0.5 : 1)
             }
             .frame(height: 40)
             Button {
@@ -104,20 +104,20 @@ struct MessageView: View {
                     Spacer()
                     HStack {
                         Text(message.text)
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                     }
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.yellow)
                     .cornerRadius(8)
                 }
             } else {
                 HStack {
                     HStack {
                         Text(message.text)
-                            .foregroundColor(.black)
+                            .foregroundColor(.white)
                     }
                     .padding()
-                    .background(Color.white)
+                    .background(Color(.lightGray))
                     .cornerRadius(8)
                     Spacer()
                 }

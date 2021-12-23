@@ -16,6 +16,7 @@ struct MainMessagesView: View {
     @State private var shouldShowNewMessageScreen = false
     @State private var chatUser: ChatUser?
     @State private var shouldNavigateToChatLogView = false
+    private var chatLogViewModel = ChatLogViewModel(chatUser: nil)
     
     var body: some View {
         NavigationView {
@@ -86,30 +87,47 @@ struct MainMessagesView: View {
     
     private var messagesView: some View {
         ScrollView {
-            ForEach(0..<10, id: \.self) { num in
+            ForEach(viewModel.recentMessages) { message in
                 VStack {
-                    NavigationLink {
-                        ChatLogView(chatUser: self.chatUser)
+                    Button {
+                        let uid = FirebaseManager.shared.auth.currentUser?.uid == message.fromId ? message.toId : message.fromId
+                        self.chatUser = .init(data: [
+                            FirebaseConstants.uid : uid,
+                            FirebaseConstants.email : message.email,
+                            FirebaseConstants.profileImageUrl : message.profileImageUrl
+                        ])
+                        self.chatLogViewModel.chatUser = self.chatUser
+                        self.chatLogViewModel.fetchMessages()
+                        self.shouldNavigateToChatLogView.toggle()
                     } label: {
                         HStack(spacing: 16) {
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 32))
-                                .padding(8)
+                            WebImage(url: URL(string: message.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width:60, height: 60)
+                                .clipped()
+                                .cornerRadius(30)
                                 .overlay(RoundedRectangle(cornerRadius: 44)
                                             .stroke(Color(.label), lineWidth: 1))
+                                .shadow(radius: 5)
                             
                             VStack(alignment: .leading) {
-                                Text("Username")
-                                    .font(.system(size: 16, weight: .bold))
-                                Text("Message Sent to user")
+                                Text(message.username)
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(Color(.label))
+                                Text(message.text)
                                     .font(.system(size: 14))
-                                    .foregroundColor(Color(.lightGray))
+                                    .foregroundColor(Color(.darkGray))
+                                    .multilineTextAlignment(.leading)
                             }
                             
                             Spacer()
                             
-                            Text("22d")
-                                .font(.system(size: 14, weight: .semibold))
+                            VStack {
+                                Text(message.timeAgo)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(Color(.label))
+                            }
                         }
                         Divider()
                             .padding(.vertical, 8)

@@ -98,6 +98,7 @@ struct MainMessagesView: View {
                         ])
                         self.chatLogViewModel.chatUser = self.chatUser
                         self.chatLogViewModel.fetchMessages()
+                        self.chatLogViewModel.checkRecentMessage()
                         self.shouldNavigateToChatLogView.toggle()
                     } label: {
                         HStack(spacing: 16) {
@@ -127,6 +128,11 @@ struct MainMessagesView: View {
                                 Text(message.timeAgo)
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundColor(Color(.label))
+                                if message.isRead == false {
+                                    Text("New")
+                                        .font(.system(size:12, weight: .semibold))
+                                        .foregroundColor(Color.red)
+                                }
                             }
                         }
                         Divider()

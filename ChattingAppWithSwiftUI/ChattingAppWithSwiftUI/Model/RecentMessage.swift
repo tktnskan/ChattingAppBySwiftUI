@@ -14,6 +14,7 @@ struct RecentMessage: Codable, Identifiable {
     let text, email: String
     let fromId, toId, profileImageUrl: String
     let timestamp: Date
+    var isRead: Bool
     
     var username: String {
         email.components(separatedBy: "@").first ?? email

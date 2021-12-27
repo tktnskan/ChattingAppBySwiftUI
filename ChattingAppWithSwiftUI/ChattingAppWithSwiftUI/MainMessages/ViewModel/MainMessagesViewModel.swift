@@ -58,9 +58,9 @@ class MainMessagesViewModel: ObservableObject {
         }
         
         FirebaseManager.shared.firestore
-            .collection("recent_messages")
+            .collection(FirebaseConstants.recentMessages)
             .document(uid)
-            .collection("messages")
+            .collection(FirebaseConstants.messages)
             .order(by: FirebaseConstants.timestamp)
             .addSnapshotListener { querySnapshot, error in
                 if let error = error {

@@ -2,7 +2,7 @@
 //  MainMessageView.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/14.
+//  Created by Jinyung Yoon on 2021/12/14.
 //
 
 import SwiftUI
@@ -25,7 +25,7 @@ struct MainMessagesView: View {
                 messagesView
                 
                 NavigationLink("", isActive: $shouldNavigateToChatLogView) {
-                    ChatLogView(chatUser: self.chatUser)
+                    ChatLogView(viewModel: chatLogViewModel)
                 }
             }
             .overlay (
@@ -81,6 +81,7 @@ struct MainMessagesView: View {
             LoginView {
                 self.viewModel.isUserCurrentlyLoggedOut = false
                 self.viewModel.fetchCurrentUser()
+                self.viewModel.fetchRecentMessages()
             }
         }
     }
@@ -98,7 +99,6 @@ struct MainMessagesView: View {
                         ])
                         self.chatLogViewModel.chatUser = self.chatUser
                         self.chatLogViewModel.fetchMessages()
-                        self.chatLogViewModel.checkRecentMessage()
                         self.shouldNavigateToChatLogView.toggle()
                     } label: {
                         HStack(spacing: 16) {
@@ -167,6 +167,8 @@ struct MainMessagesView: View {
                 print(user.email)
                 self.shouldNavigateToChatLogView.toggle()
                 self.chatUser = user
+                self.chatLogViewModel.chatUser = user
+                self.chatLogViewModel.fetchMessages()
             }
         }
     }

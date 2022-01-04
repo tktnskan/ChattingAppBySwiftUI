@@ -2,7 +2,7 @@
 //  RecentMessage.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/23.
+//  Created by Jinyung Yoon on 2021/12/23.
 //
 
 import Foundation
@@ -33,7 +33,7 @@ struct RecentMessage: Codable, Identifiable {
                 return "yesterday"
             } else {
                 let formatter = DateFormatter()
-                formatter.dateFormat = "MMM:dd"
+                formatter.dateFormat = "MMM dd"
                 return formatter.string(from: timestamp)
             }
         }

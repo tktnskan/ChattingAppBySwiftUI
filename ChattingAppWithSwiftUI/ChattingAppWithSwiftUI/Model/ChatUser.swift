@@ -2,7 +2,7 @@
 //  ChatUser.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/17.
+//  Created by Jinyung Yoon on 2021/12/17.
 //
 
 import Foundation

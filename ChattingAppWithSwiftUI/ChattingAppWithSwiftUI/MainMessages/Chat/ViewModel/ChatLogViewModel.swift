@@ -2,7 +2,7 @@
 //  ChatLogViewModel.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/21.
+//  Created by Jinyung Yoon on 2021/12/21.
 //
 
 import Foundation
@@ -12,9 +12,10 @@ class ChatLogViewModel: ObservableObject {
     
     @Published var chatText = ""
     @Published var errorMessage = ""
-    
+    @Published var count = 0
     @Published var chatMessages = [ChatMessage]()
     
+    var firestoreListener: ListenerRegistration?
     var chatUser: ChatUser?
     
     init(chatUser: ChatUser?) {
@@ -23,13 +24,13 @@ class ChatLogViewModel: ObservableObject {
         fetchMessages()
     }
     
-    var firestoreListener: ListenerRegistration?
-    
     func fetchMessages() {
         guard let fromId = FirebaseManager.shared.auth.currentUser?.uid else { return }
         guard let toId = chatUser?.uid else { return }
+        
         firestoreListener?.remove()
         chatMessages.removeAll()
+        
         firestoreListener = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.messages)
             .document(fromId)
@@ -42,11 +43,15 @@ class ChatLogViewModel: ObservableObject {
                     return
                 }
                 
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.checkRecentMessage()
+                }
+                
                 querySnapshot?.documentChanges.forEach({ change in
                     if change.type == .added {
                         do {
-                            if let cm = try change.document.data(as: ChatMessage.self) {
-                                self.chatMessages.append(cm)
+                            if let chatMessage = try change.document.data(as: ChatMessage.self) {
+                                self.chatMessages.append(chatMessage)
                                 print("Appending chatMessage in ChatLogView: \(Date())")
                             }
                         } catch {
@@ -113,9 +118,12 @@ class ChatLogViewModel: ObservableObject {
             .document(currentUser.uid)
             .collection(FirebaseConstants.messages)
             .document(toId)
-        
-        document.updateData(["isRead":true])
-
+    
+        document.updateData(["isRead":true]) { error in
+            if let error = error {
+                self.errorMessage = "Failed to update message into Firestore: \(error)"
+            }
+        }
     }
     
     private func persistRecentMessage(chatText: String) {
@@ -173,6 +181,4 @@ class ChatLogViewModel: ObservableObject {
                 }
         }
     }
-    
-    @Published var count = 0
 }

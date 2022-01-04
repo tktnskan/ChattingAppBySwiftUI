@@ -2,7 +2,7 @@
 //  ChatLogView.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/17.
+//  Created by Jinyung Yoon on 2021/12/17.
 //
 
 import SwiftUI
@@ -11,13 +11,13 @@ import SwiftUI
 struct ChatLogView: View {
     
     static let emptyScrollToString = "Empty"
-    let chatUser: ChatUser?
+//    let chatUser: ChatUser?
     @ObservedObject var viewModel: ChatLogViewModel
     
-    init(chatUser: ChatUser?) {
-        self.chatUser = chatUser
-        self.viewModel = ChatLogViewModel(chatUser: chatUser)
-    }
+//    init(chatUser: ChatUser?) {
+//        self.chatUser = chatUser
+//        self.viewModel = ChatLogViewModel(chatUser: chatUser)
+//    }
     
     var body: some View {
         if #available(iOS 15.0, *) {
@@ -25,8 +25,11 @@ struct ChatLogView: View {
                 messagesView
                 Text(viewModel.errorMessage)
             }
-            .navigationTitle(chatUser?.email ?? "")
+            .navigationTitle(viewModel.chatUser?.email ?? "")
             .navigationBarTitleDisplayMode(.inline)
+            .onDisappear {
+                viewModel.firestoreListener?.remove()
+            }
         } else {
             // Fallback on earlier versions
         }
@@ -48,9 +51,7 @@ struct ChatLogView: View {
                             .id(Self.emptyScrollToString)
                         }
                         .onReceive(viewModel.$count) { _ in
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                scrollViewProxy.scrollTo(Self.emptyScrollToString, anchor: .bottom)
-                            }
+                            scrollViewProxy.scrollTo(Self.emptyScrollToString, anchor: .bottom)
                         }
                     }
                 }
@@ -144,7 +145,7 @@ private struct DescriptionPlaceholder: View {
 struct ChatLogView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ChatLogView(chatUser: .init(data: ["uid":"AQ7xUDT3pvV6FiF0Gm4lnTIjoF52" ,"email":"JinyungYoon@gmail.com"]))
+            ChatLogView(viewModel: ChatLogViewModel(chatUser: nil))
         }
         .preferredColorScheme(.dark)
 //        MainMessagesView()

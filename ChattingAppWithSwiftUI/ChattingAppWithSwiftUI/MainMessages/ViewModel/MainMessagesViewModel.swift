@@ -2,7 +2,7 @@
 //  MainMessagesViewModel.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/17.
+//  Created by Jinyung Yoon on 2021/12/17.
 //
 
 import Foundation
@@ -15,6 +15,8 @@ class MainMessagesViewModel: ObservableObject {
     @Published var chatUser: ChatUser?
     @Published var isUserCurrentlyLoggedOut = false
     @Published var recentMessages = [RecentMessage]()
+    
+    private var firestoreListener: ListenerRegistration?
     
     init() {
         
@@ -29,7 +31,7 @@ class MainMessagesViewModel: ObservableObject {
     func fetchCurrentUser() {
 
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            self.errorMessage = "Could not find firebase uid"
+            errorMessage = "Could not find firebase uid"
             return
         }
         
@@ -53,11 +55,14 @@ class MainMessagesViewModel: ObservableObject {
     
     func fetchRecentMessages() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            self.errorMessage = "Could not find firebase uid"
+            errorMessage = "Could not find firebase uid"
             return
         }
         
-        FirebaseManager.shared.firestore
+        firestoreListener?.remove()
+        recentMessages.removeAll()
+        
+        firestoreListener = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.recentMessages)
             .document(uid)
             .collection(FirebaseConstants.messages)
@@ -70,17 +75,20 @@ class MainMessagesViewModel: ObservableObject {
                 }
                 
                 querySnapshot?.documentChanges.forEach({ change in
+                    print(change.type.rawValue)
+                    
                     let docId = change.document.documentID
                 
-                    if let index = self.recentMessages.firstIndex(where: { rm in
-                        return rm.id == docId
+                    if let index = self.recentMessages.firstIndex(where: { recentMessage in
+                        return recentMessage.id == docId
                     }) {
                         self.recentMessages.remove(at: index)
                     }
                     
                     do {
-                        if let rm = try change.document.data(as: RecentMessage.self) {
-                            self.recentMessages.insert(rm, at: 0)
+                        if let recentMessage = try change.document.data(as: RecentMessage.self) {
+                            print(recentMessage)
+                            self.recentMessages.insert(recentMessage, at: 0)
                         }
                     } catch {
                         print(error)

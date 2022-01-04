@@ -2,7 +2,7 @@
 //  FirebaseManager.swift
 //  ChattingAppWithSwiftUI
 //
-//  Created by GJC03280 on 2021/12/14.
+//  Created by Jinyung Yoon on 2021/12/14.
 //
 
 import Foundation

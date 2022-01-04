@@ -43,7 +43,7 @@ class ChatLogViewModel: ObservableObject {
                     return
                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.checkRecentMessage()
                 }
                 

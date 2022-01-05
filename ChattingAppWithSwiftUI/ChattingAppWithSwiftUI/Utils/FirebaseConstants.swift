@@ -18,4 +18,5 @@ struct FirebaseConstants {
     static let messages = "messages"
     static let users = "users"
     static let recentMessages = "recent_messages"
+    static let loginStatus = "loginStatus"
 }

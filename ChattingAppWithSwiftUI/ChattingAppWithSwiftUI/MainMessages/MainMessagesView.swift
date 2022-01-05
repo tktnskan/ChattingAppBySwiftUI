@@ -11,11 +11,12 @@ import SDWebImageSwiftUI
 
 struct MainMessagesView: View {
     
-    @State private var shouldShowLogOutOption = false
+    @State private var shouldShowOptions = false
     @ObservedObject private var viewModel = MainMessagesViewModel()
     @State private var shouldShowNewMessageScreen = false
     @State private var chatUser: ChatUser?
     @State private var shouldNavigateToChatLogView = false
+    @State private var shouldShowImagePicker = false
     private var chatLogViewModel = ChatLogViewModel(chatUser: nil)
     
     var body: some View {
@@ -52,19 +53,10 @@ struct MainMessagesView: View {
                 let email = viewModel.chatUser?.email.components(separatedBy: "@")
                 Text(email?[0] ?? "")
                     .font(.system(size: 24, weight: .bold))
-                
-                HStack {
-                    Circle()
-                        .foregroundColor(.green)
-                        .frame(width: 14, height: 14)
-                    Text("online")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(.lightGray))
-                }
             }
             Spacer()
             Button {
-                shouldShowLogOutOption.toggle()
+                shouldShowOptions.toggle()
             } label: {
                 Image(systemName: "gear")
                     .font(.system(size: 24, weight: .bold))
@@ -72,11 +64,20 @@ struct MainMessagesView: View {
             }
         }
         .padding()
-        .actionSheet(isPresented: $shouldShowLogOutOption) {
-            .init(title: Text("Settings"), message: Text("Waht do you want to do?"), buttons: [.destructive(Text("Sign Out"), action: {
+        .actionSheet(isPresented: $shouldShowOptions) {
+            .init(title: Text("Settings"), message: Text("Waht do you want to do?"), buttons: [
+                .default(Text("Change Profile"), action: {
+                    self.shouldShowImagePicker.toggle()
+                })
+                ,.destructive(Text("Sign Out"), action: {
                 viewModel.handleSignOut()
             }), .cancel()])
         }
+        .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: {
+            self.viewModel.changeProfile()
+        }, content: {
+            ImagePicker(image: $viewModel.image)
+        })
         .fullScreenCover(isPresented: $viewModel.isUserCurrentlyLoggedOut, onDismiss: nil) {
             LoginView {
                 self.viewModel.isUserCurrentlyLoggedOut = false
@@ -141,6 +142,7 @@ struct MainMessagesView: View {
                 }
                 .padding(.horizontal)
             }
+            .padding(.top, 5)
             .padding(.bottom, 50)
         }
     }

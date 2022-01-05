@@ -8,6 +8,8 @@
 import Foundation
 import Firebase
 import FirebaseFirestoreSwift
+import SwiftUI
+import SDWebImageSwiftUI
 
 class MainMessagesViewModel: ObservableObject {
     
@@ -16,6 +18,7 @@ class MainMessagesViewModel: ObservableObject {
     @Published var isUserCurrentlyLoggedOut = false
     @Published var recentMessages = [RecentMessage]()
     
+    @Published var image: UIImage?
     private var firestoreListener: ListenerRegistration?
     
     init() {
@@ -94,6 +97,42 @@ class MainMessagesViewModel: ObservableObject {
                         print(error)
                     }
                 })
+            }
+    }
+    
+    func changeProfile() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        guard let imageData = self.image?.jpegData(compressionQuality: 0.5) else { return }
+        ref.putData(imageData, metadata: nil) { (metaDatam, error) in
+            if let error = error {
+                self.errorMessage = "Failed to push image to Storage: \(error)"
+                return
+            }
+            
+            ref.downloadURL { url, error in
+                if let error = error {
+                    self.errorMessage = "Failed to retrieve downloadURL: \(error)"
+                    return
+                }
+                
+                self.errorMessage = "Successfully stored image with url: \(url?.absoluteString ?? "")"
+                
+                guard let url = url else { return }
+                self.storeUserInformation(imageProfileUrl: url)
+            }
+        }
+    }
+    
+    private func storeUserInformation(imageProfileUrl: URL) {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        
+        FirebaseManager.shared.firestore.collection("users")
+            .document(uid).updateData(["profileImageUrl": imageProfileUrl.absoluteString]) { error in
+                if let error = error {
+                    self.errorMessage = "Failed to update ProfileImage : \(error)"
+                }
+                self.fetchCurrentUser()
             }
     }
     
